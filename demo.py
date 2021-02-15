@@ -22,6 +22,22 @@ poi_df = park_poi_df()
 
 try:
     parks = st.multiselect("Choose park", list(poi_df.index))
+
+    st.sidebar.markdown('### Time Filters')
+    year = st.sidebar.selectbox('Year', ["2018","2019","2020"])
+    type = st.sidebar.selectbox('Type', ["By Week","By Month"])
+    time_range = st.sidebar.slider('Time Range', min_value=0, max_value=50)
+
+    data = park_patterns_df
+
+    #data['date_range_start'] = data['date_range_start'].astype('|S')
+    #data.dtypes
+    #selected_year = data[data['date_range_start'].str.contains(year)]
+    #data = data[['date_range_start', 'lng', 'lat', 'raw_visitor_counts']]
+    #st.line_chart(data)
+
+
+
     ALL_LAYERS = {
         "Park Locations": pdk.Layer(
             "ScatterplotLayer",
@@ -49,18 +65,18 @@ try:
             get_alignment_baseline="'bottom'",
         )
     }
-    
+
     st.sidebar.markdown('### Map Layers')
-    
-    
+
+
     selected_layers = []
-    
+
     for layer_name, layer in ALL_LAYERS.items():
         if st.sidebar.checkbox(layer_name, True):
             if layer_name == "Park Names":
                 pass
             selected_layers.append(layer)
-    
+
     if selected_layers:
         st.pydeck_chart(pdk.Deck(
             map_style="mapbox://styles/mapbox/light-v9",
@@ -70,9 +86,9 @@ try:
         ))
     else:
         st.error("Please choose at least one layer above.")
+
 except urllib.error.URLError as e:
     st.error("""
         **This demo requires internet access.**
-
         Connection error: %s
-    """ % e.reason) 
+    """ % e.reason)
